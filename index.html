@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>图书管理</title>
+    <link type="text/css" rel="stylesheet" href="css/index.css">
+    <script type="text/javascript" src="js/vue.js" charset="utf-8"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div class="grid">
+            <div>
+                <h1>图书管理</h1>
+                <div class="book">
+                    <label for="id">编号：</label>
+                    <input type="text" id="id" v-model='id' :disabled='flag'>
+                    <label for="name">名称：</label>
+                    <input type="text" id="name" v-model='name'>
+                    <button @click='handle' :disabled='submitFlag'>提交</button>
+                </div>
+            </div>
+            <div class="total">
+                <span>图书总数：</span>
+                <span>{{total}}</span>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>编号</th>
+                        <th>名称</th>
+                        <th>时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr :key='item.id' v-for='item in books'>
+                        <td>{{item.id}}</td>
+                        <td>{{item.name}}</td>
+                        <td>{{item.date | format }}</td>
+                        <td>
+                            <!-- click.prevent 点击事件不再重载页面 阻止a标签的默认行为 -->
+                            <a href="" @click.prevent='toEdit(item.id)'>修改</a>
+                            <span> | </span>
+                            <a href="" @click.prevent='deleteBook(item.id)'>删除</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                id: '',
+                name: '',
+                flag: false,    //是否对编号输入框输入
+                submitFlag: false,  //是否可以提交,真则不可提交，反之
+                books: [
+                    {
+                        id: "1",
+                        name: "三国演义",
+                        date: new Date()
+                    },
+                    {
+                        id: "2",
+                        name: "红楼梦",
+                        date: new Date()
+                    },
+                    {
+                        id: "3",
+                        name: "水浒传",
+                        date: new Date()
+                    },
+                    {
+                        id: "4",
+                        name: "西游记",
+                        date: new Date()
+                    }
+                ],
+            },
+            methods: {
+                handle() {
+                    // 判断是否为编辑模式
+                    if (this.flag) {
+                        // 根据当前的id更新数组中对应的数据
+                        this.books.forEach(item => {
+                            if (item.id == this.id) {
+                                item.name = this.name;
+                                return;
+                            }
+                        });
+                        this.flag = false;
+                    } else {
+                        // 添加图书
+                        //建立一个对象用来封装一本书的信息
+                        var newBook = new Object();
+                        if (this.id.length != 0 && this.name.length != 0) {
+                            newBook.id = this.id;
+                            //如果编号重复，则提示后重新输入
+                            this.books.forEach(item => {
+                            if (item.id == this.id) {
+                                alert("已有该编号");
+                                // 清空表单
+                                this.id = '';
+                                this.name = '';
+                                handle();
+                            }
+                        });
+                            newBook.name = this.name;
+                            newBook.date = new Date();
+                            this.books.push(newBook);
+                            this.id = '';
+                            this.name = '';
+                        }else{
+                            alert("请填写完整信息!");
+                        }
+                    }
+                },
+                toEdit(id) {
+                    // 禁止改变id
+                    this.flag = true;
+                    // 根据id查询要编辑的数据
+                    let book = this.books.filter(item => {
+                        return item.id == id;
+                    });
+                    // 把获取的信息填充表单
+                    this.id = book[0].id;
+                    this.name = book[0].name;
+                },
+                // 删除图书
+                deleteBook(id) {
+                    // 通过数组的filter方法进行删除
+                    this.books = this.books.filter(item => {
+                        // 排除掉id不等于books.id中的项
+                        return item.id !== id;
+                    });
+
+                }
+            },
+            filters: {
+                format(value) {
+                    return value.getFullYear() + "-" + (value.getMonth() + 1) + "-" + value.getDate()
+                }
+            },
+            computed: {
+                total() {
+                    // 计算图书总数
+                    return this.books.length;
+                }
+            },
+            watch: {
+                name: function (val) {
+                    // 验证图书名称是否已经存在
+                    this.submitFlag = this.books.some(item => {
+                        // 如果存在则为真，将submitflag等于true
+                        return item.name == val;
+                    })
+
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>
