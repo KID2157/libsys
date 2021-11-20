@@ -1,0 +1,33 @@
+.grid {
+    margin: auto;
+    width: 600px;
+    text-align: center;
+}
+.grid table {
+    border-top: 1px solid #fff;
+    width: 100%;
+    border-collapse: collapse;
+}
+.grid th,
+td {
+    padding: 10px;
+    border: 1px dashed orange;
+    height: 35px;
+    line-height: 35px;
+}
+.grid th {
+    background-color: orange;
+}
+a {
+    text-decoration: none;
+}
+.book {
+    background-color: orange;
+    padding: 5px 0;
+}
+.grid .total {
+    height: 30px;
+    line-height: 30px;
+    background-color: orange;
+    border-top: 1px solid #fff;
+}
