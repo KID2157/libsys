@@ -94,6 +94,8 @@
                             }
                         });
                         this.flag = false;
+                        this.id="";
+                        this.name="";
                     } else {
                         // 添加图书
                         //建立一个对象用来封装一本书的信息
@@ -159,7 +161,6 @@
                         // 如果存在则为真，将submitflag等于true
                         return item.name == val;
                     })
-
                 }
             },
         })
